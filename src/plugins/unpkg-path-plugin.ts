@@ -1,5 +1,11 @@
 import * as esbuild from 'esbuild-wasm';
 import axios from 'axios';
+import * as localForage from 'localforage';
+
+// initiating the localforage IndexedDB database
+const fileCache = localForage.createInstance({
+  name: 'whateverNameIWant'
+});
 
 export const unpkgPathPlugin = () => {
   return {
@@ -40,12 +46,26 @@ export const unpkgPathPlugin = () => {
           };
         }
 
+        // check with localForage to see if we already fetched this file
+        const cachedResult = localForage.getItem(args.path)
+
+        // if cached, return it 
+        if (cachedResult) {
+          return cachedResult
+        }
+
         const { data, request } = await axios.get(args.path);
-        return {
+
+        // store response in cache
+        const result = {
           loader: 'jsx',
           contents: data,
           resolveDir: new URL('./', request.responseURL).pathname,
         };
+
+        localForage.setItem(args.path, result)
+
+        return result
       });
     },
   };
