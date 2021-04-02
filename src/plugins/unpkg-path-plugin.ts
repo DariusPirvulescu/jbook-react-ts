@@ -1,10 +1,9 @@
 import * as esbuild from 'esbuild-wasm';
 import axios from 'axios';
-import * as localForage from 'localforage';
+import localForage from 'localforage';
 
-// initiating the localforage IndexedDB database
 const fileCache = localForage.createInstance({
-  name: 'whateverNameIWant'
+  name: 'whateverNameIWant',
 });
 
 export const unpkgPathPlugin = () => {
@@ -40,32 +39,33 @@ export const unpkgPathPlugin = () => {
           return {
             loader: 'jsx',
             contents: `
-              import React, { useState } from 'react';
+              import React, { useState } from 'react-select';
               console.log(React, useState);
             `,
           };
         }
 
         // check with localForage to see if we already fetched this file
-        const cachedResult = localForage.getItem(args.path)
-
+        const cachedResult = await fileCache.getItem<esbuild.OnLoadResult>(
+          args.path
+        );
+        
         // if cached, return it 
         if (cachedResult) {
-          return cachedResult
+          return cachedResult;
         }
 
+        // if not, make the request and store the response in IndexedDB, then return the response
         const { data, request } = await axios.get(args.path);
 
-        // store response in cache
-        const result = {
+        const result: esbuild.OnLoadResult = {
           loader: 'jsx',
           contents: data,
           resolveDir: new URL('./', request.responseURL).pathname,
         };
+        await fileCache.setItem(args.path, result);
 
-        localForage.setItem(args.path, result)
-
-        return result
+        return result;
       });
     },
   };
