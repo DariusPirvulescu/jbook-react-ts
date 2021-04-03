@@ -27,7 +27,7 @@ const App = () => {
       entryPoints: ['index.js'],
       bundle: true,
       write: false,
-      plugins: [unpkgPathPlugin()],
+      plugins: [unpkgPathPlugin(input)],
       define: {
         'process.env.NODE_ENV': '"production"',
         global: 'window'
@@ -44,6 +44,8 @@ const App = () => {
       <textarea
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        rows={20}
+        cols={100}
       ></textarea>
       <div>
         <button onClick={onClick}>Submit</button>
