@@ -2,6 +2,7 @@ import * as esbuild from 'esbuild-wasm';
 import { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { unpkgPathPlugin } from './plugins/unpkg-path-plugin';
+import { fetchPlugin } from './plugins/fetch-plugins'
 
 const App = () => {
   const ref = useRef<any>();
@@ -27,7 +28,7 @@ const App = () => {
       entryPoints: ['index.js'],
       bundle: true,
       write: false,
-      plugins: [unpkgPathPlugin(input)],
+      plugins: [unpkgPathPlugin(), fetchPlugin(input)],
       define: {
         'process.env.NODE_ENV': '"production"',
         global: 'window'
@@ -44,8 +45,8 @@ const App = () => {
       <textarea
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        rows={20}
-        cols={100}
+        rows={10}
+        cols={50}
       ></textarea>
       <div>
         <button onClick={onClick}>Submit</button>
