@@ -40,6 +40,8 @@ const App = () => {
     setCode(result.outputFiles[0].text);
   };
 
+  const html = `<script>${code}</script>`
+
   return (
     <div>
       <textarea
@@ -52,13 +54,13 @@ const App = () => {
         <button onClick={onClick}>Submit</button>
       </div>
       <pre>{code}</pre>
-      <iframe sandbox="" srcDoc={html} />
+      <iframe sandbox="allow-scripts" srcDoc={html} />
     </div>
   );
 };
 
-  const html = `
-    <h3>iframe local html content</h3>
-  `
+  // const html = `
+  //   <h3>iframe local html content</h3>
+  // `
 
 ReactDOM.render(<App />, document.querySelector("#root"));
