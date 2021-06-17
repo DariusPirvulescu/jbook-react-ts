@@ -5,10 +5,12 @@ import ReactDOM from "react-dom";
 import { unpkgPathPlugin } from "./plugins/unpkg-path-plugin";
 import { fetchPlugin } from "./plugins/fetch-plugins";
 import CodeEditor from "./components/code-editor"
+import Preview from "./components/preview";
 
 const App = () => {
   const ref = useRef<any>();
-  const iframeRef = useRef<any>()
+  // const iframeRef = useRef<any>()
+  const [code, setCode] = useState("")
   const [input, setInput] = useState("");
 
   const startService = async () => {
@@ -22,11 +24,9 @@ const App = () => {
   }, []);
 
   const onClick = async () => {
-    if (!ref.current) {
-      return;
-    }
+    if (!ref.current) { return; }
 
-    iframeRef.current.srcdoc = html;
+    // iframeRef.current.srcdoc = html;
 
     const result = await ref.current.build({
       entryPoints: ["index.js"],
@@ -39,42 +39,50 @@ const App = () => {
       },
     });
 
-    iframeRef.current.contentWindow.postMessage(result.outputFiles[0].text, '*')
+    setCode(result.outputFiles[0].text)
+
+    // iframeRef.current.contentWindow.postMessage(result.outputFiles[0].text, '*')
   };
 
-  const html = `
-    <html>
-    <head></head>
-    <body>
-      <div id="root"></div>
-      <script>
-        window.addEventListener('message', (event) => {
-          // console.log(event.data)
-          try {
-            eval(event.data)
-          } catch (err) {
-            const root = document.querySelector('#root')
-            root.innerHTML = '<div style="color: red"><h4>Runtime Error</h4>' + err + '</div>'
-          }
-        }, false)
-      </script>
-    </body>
-    </html>
-  `
+  // const html = `
+  //   <html>
+  //   <head></head>
+  //   <body>
+  //     <div id="root"></div>
+  //     <script>
+  //       window.addEventListener('message', (event) => {
+  //         // console.log(event.data)
+  //         try {
+  //           eval(event.data)
+  //         } catch (err) {
+  //           const root = document.querySelector('#root')
+  //           root.innerHTML = '<div style="color: red"><h4>Runtime Error</h4>' + err + '</div>'
+  //         }
+  //       }, false)
+  //     </script>
+  //   </body>
+  //   </html>
+  // `
 
   return (
     <div>
       <CodeEditor initialValue="const a = 30" onChange={(value) => setInput(value) } />
-      <textarea
+      {/* <textarea
         value={input}
         onChange={(e) => setInput(e.target.value)}
         rows={10}
         cols={50}
-      ></textarea>
+      ></textarea> */}
       <div>
         <button onClick={onClick}>Submit</button>
       </div>
-      <iframe title="iframe code preview" ref={iframeRef} sandbox="allow-scripts" srcDoc={html} />
+      {/* <iframe 
+        // title="iframe code preview" 
+        // ref={iframeRef} 
+        // sandbox="allow-scripts" 
+        // srcDoc={html} 
+        /> */}
+        <Preview code={code} />
     </div>
   );
 };
