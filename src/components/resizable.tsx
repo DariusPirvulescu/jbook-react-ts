@@ -29,7 +29,7 @@ const Resizable: React.FC<ResizableProps> = ({ direction, children }) => {
     window.addEventListener('resize', listener);
 
     return () => window.removeEventListener('resize', listener);
-  }, []);
+  }, [width]);
 
   if (direction === 'horizontal') {
     resizableProps = {
@@ -37,7 +37,7 @@ const Resizable: React.FC<ResizableProps> = ({ direction, children }) => {
       minConstraints: [innerWidth * 0.2, Infinity],
       maxConstraints: [innerWidth * 0.75, Infinity],
       height: Infinity,
-      width: width,
+      width,
       resizeHandles: ['e'],
       onResizeStop: (event, data) => setWidth(data.size.width),
     };
