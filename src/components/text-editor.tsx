@@ -1,5 +1,7 @@
+import './text-editor.css'
 import { useState, useEffect, useRef } from "react";
 import MDEditor from "@uiw/react-md-editor";
+
 
 const TextEditor: React.FC = () => {
   const [editing, setEditing] = useState(false);
@@ -25,14 +27,14 @@ const TextEditor: React.FC = () => {
 
   if (editing) {
     return (
-      <div ref={previewRef}>
+      <div className="text-editor" ref={previewRef}>
         <MDEditor />
       </div>
     );
   }
 
   return (
-    <div onClick={() => setEditing(true)}>
+    <div className="text-editor" onClick={() => setEditing(true)}>
       <MDEditor.Markdown source="# Henlo" />
     </div>
   );
