@@ -7,20 +7,20 @@ import { ActionType } from "./action-types";
 export const store = createStore(reducers, {}, applyMiddleware(thunk))
 
 /** Testing */
-// store.dispatch({
-//   type: ActionType.INSERT_CELL_BEFORE,
-//   payload: {
-//     id: null,
-//     type: 'code'
-//   }
-// })
+store.dispatch({
+  type: ActionType.INSERT_CELL_BEFORE,
+  payload: {
+    id: null,
+    type: 'code'
+  }
+})
 
-// store.dispatch({
-//   type: ActionType.INSERT_CELL_BEFORE,
-//   payload: {
-//     id: null,
-//     type: 'text'
-//   }
-// })
+store.dispatch({
+  type: ActionType.INSERT_CELL_BEFORE,
+  payload: {
+    id: null,
+    type: 'text'
+  }
+})
 
-// console.log(store.getState())
+// console.log('store', store.getState())
