@@ -47,6 +47,8 @@ const reducer = produce((
         id: randmId(),
       }
 
+      state.data[cell.id] = cell
+      
       const foundIndex = state.order.findIndex((id) => id === action.payload.id) 
 
       if (foundIndex < 0) {
