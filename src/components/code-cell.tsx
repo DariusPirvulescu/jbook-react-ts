@@ -18,7 +18,9 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
     const { data, order } = state.cells
     const orderedCells = order.map(id => data[id])
 
-    const joinedCode = []
+    const joinedCode = [
+      `const show = (val) => { document.querySelector('#root').innerHTML = val}`
+    ]
     for (let c of orderedCells) {
       if (c.type === 'code') { joinedCode.push(c.content) }
       if (c.id === cell.id) { break }
