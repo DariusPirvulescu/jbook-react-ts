@@ -14,22 +14,34 @@ interface CodeCellProps {
 const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
 
   const bundle = useTypedSelector((state) => state.bundles[cell.id]);
+  const cumulativeCode = useTypedSelector((state) => {
+    const { data, order } = state.cells
+    const orderedCells = order.map(id => data[id])
+
+    const joinedCode = []
+    for (let c of orderedCells) {
+      if (c.type === 'code') { joinedCode.push(c.content) }
+      if (c.id === cell.id) { break }
+    }
+
+    return joinedCode
+  })
 
   const { updateCell, createBundle } = useActions()
 
   useEffect(() => {
     if (!bundle) {
-      createBundle(cell.id, cell.content);
+      createBundle(cell.id, cumulativeCode.join('\n'));
       return;
     }
 
     const timer = setTimeout(async () => {
-      createBundle(cell.id, cell.content);
+      createBundle(cell.id, cumulativeCode.join('\n'));
     }, 750);
 
     return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cell.content, cell.id, createBundle]);
+  }, [cumulativeCode.join('\n'), cell.id, createBundle]);
   
   return  (
     <Resizable direction="vertical">
