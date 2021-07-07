@@ -19,7 +19,15 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
     const orderedCells = order.map(id => data[id])
 
     const joinedCode = [
-      `const show = (val) => { document.querySelector('#root').innerHTML = val}`
+      `
+        const show = (val) => { 
+          if (typeof val === 'object') {
+            document.querySelector('#root').innerHTML = JSON.stringify(val)
+          } else {
+            document.querySelector('#root').innerHTML = val
+          }
+        }
+      `
     ]
     for (let c of orderedCells) {
       if (c.type === 'code') { joinedCode.push(c.content) }
