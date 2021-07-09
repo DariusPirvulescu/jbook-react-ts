@@ -6,65 +6,32 @@ import { Cell } from "../state/cell";
 import { useActions } from "../hooks/use-actions";
 import { useTypedSelector } from "../hooks/use-typed-selector";
 import './code-cell.css'
+import { useCumulativeCode } from "../hooks/use-cumulative-code";
 
 interface CodeCellProps {
   cell: Cell
 }
 
 const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
-
+  const cumulativeCode = useCumulativeCode(cell.id)
   const bundle = useTypedSelector((state) => state.bundles[cell.id]);
-  const cumulativeCode = useTypedSelector((state) => {
-    const { data, order } = state.cells
-    const orderedCells = order.map(id => data[id])
-
-    const showFunc = `
-      import _React from 'react';
-      import _ReactDOM from 'react-dom';
-      var show = (val) => { 
-        if (typeof val === 'object') {
-          if (val.$$typeof && val.props) {
-            _ReactDOM.render(val, root);
-          } else {
-            document.querySelector('#root').innerHTML = JSON.stringify(val)
-          }
-        } else {
-          document.querySelector('#root').innerHTML = val
-        }
-      }
-    `
-    const showFuncNoop = `var show = () => {}`
-    const joinedCode = []
-    for (let c of orderedCells) {
-      if (c.type === 'code') { 
-        if (c.id === cell.id) {
-          joinedCode.push(showFunc)
-        } else {
-          joinedCode.push(showFuncNoop)
-        }
-        joinedCode.push(c.content) 
-      }
-      if (c.id === cell.id) { break }
-    }
-
-    return joinedCode
-  })
+  
 
   const { updateCell, createBundle } = useActions()
 
   useEffect(() => {
     if (!bundle) {
-      createBundle(cell.id, cumulativeCode.join('\n'));
+      createBundle(cell.id, cumulativeCode);
       return;
     }
 
     const timer = setTimeout(async () => {
-      createBundle(cell.id, cumulativeCode.join('\n'));
+      createBundle(cell.id, cumulativeCode);
     }, 750);
 
     return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cumulativeCode.join('\n'), cell.id, createBundle]);
+  }, [cumulativeCode, cell.id, createBundle]);
   
   return  (
     <Resizable direction="vertical">
