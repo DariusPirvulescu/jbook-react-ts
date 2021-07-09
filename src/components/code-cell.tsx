@@ -20,9 +20,15 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
 
     const joinedCode = [
       `
+        import _React from 'react';
+        import _ReactDOM from 'react-dom';
         const show = (val) => { 
           if (typeof val === 'object') {
-            document.querySelector('#root').innerHTML = JSON.stringify(val)
+            if (val.$$typeof && val.props) {
+              _ReactDOM.render(val, root);
+            } else {
+              document.querySelector('#root').innerHTML = JSON.stringify(val)
+            }
           } else {
             document.querySelector('#root').innerHTML = val
           }
