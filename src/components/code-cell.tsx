@@ -18,25 +18,32 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
     const { data, order } = state.cells
     const orderedCells = order.map(id => data[id])
 
-    const joinedCode = [
-      `
-        import _React from 'react';
-        import _ReactDOM from 'react-dom';
-        const show = (val) => { 
-          if (typeof val === 'object') {
-            if (val.$$typeof && val.props) {
-              _ReactDOM.render(val, root);
-            } else {
-              document.querySelector('#root').innerHTML = JSON.stringify(val)
-            }
+    const showFunc = `
+      import _React from 'react';
+      import _ReactDOM from 'react-dom';
+      var show = (val) => { 
+        if (typeof val === 'object') {
+          if (val.$$typeof && val.props) {
+            _ReactDOM.render(val, root);
           } else {
-            document.querySelector('#root').innerHTML = val
+            document.querySelector('#root').innerHTML = JSON.stringify(val)
           }
+        } else {
+          document.querySelector('#root').innerHTML = val
         }
-      `
-    ]
+      }
+    `
+    const showFuncNoop = `var show = () => {}`
+    const joinedCode = []
     for (let c of orderedCells) {
-      if (c.type === 'code') { joinedCode.push(c.content) }
+      if (c.type === 'code') { 
+        if (c.id === cell.id) {
+          joinedCode.push(showFunc)
+        } else {
+          joinedCode.push(showFuncNoop)
+        }
+        joinedCode.push(c.content) 
+      }
       if (c.id === cell.id) { break }
     }
 
