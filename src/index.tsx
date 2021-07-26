@@ -8,9 +8,7 @@ import CellList from './components/cell-list';
 const App = () => {
   return (
     <Provider store={store} >
-      <>
       <CellList />
-      </>
     </Provider>
   );
 };
