@@ -8,8 +8,9 @@ import {
   InsertCellAfterAction,
   MoveDirection,
 } from "../actions";
-import { CellType } from "../cell";
+import { Cell, CellType } from "../cell";
 import bundler from "../../bundler";
+import axios from "axios";
 
 export const updateCell = (id: string, content: string): UpdateCellAction => {
   return {
@@ -58,5 +59,26 @@ export const createBundle = (cellId: string, input: string) => {
         }
       }
     })
+  }
+}
+
+export const fetchCells = () => {
+  return async (dispatch: Dispatch<Action>) => {
+    dispatch({ type: ActionType.FETCH_CELLS})
+
+    try {
+      const {data}: { data: Cell[] } = await axios.get('/cells')
+
+      dispatch({
+        type: ActionType.FETCH_CELLS_COMPLETE,
+        payload: data
+      })
+
+    } catch (error) {
+      dispatch({
+        type: ActionType.FETCH_CELLS_ERROR,
+        payload: error.message
+      })
+    }
   }
 }
