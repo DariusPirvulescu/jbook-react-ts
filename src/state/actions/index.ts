@@ -62,6 +62,7 @@ export interface FetchCellsErrorAction {
   type: ActionType.FETCH_CELLS_ERROR
   payload: string
 }
+
 export type Action =
   | MoveCellAction
   | DeleteCellAction
