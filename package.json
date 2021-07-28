@@ -1,5 +1,5 @@
 {
-  "name": "local-client",
+  "name": "@plutonote/local-client",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
